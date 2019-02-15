@@ -1,0 +1,10 @@
+image: archlinux
+packages:
+  - go
+tasks:
+  - build: |
+      export GOPATH=$PWD
+      go get github.com/Bios-Marcel/discordemojimap
+      cd src/github.com/Bios-Marcel/discordemojimap
+      go vet ./...
+      go test ./...
