@@ -1,3 +1,5 @@
+// Package discordemojimap provides a Replace function in order to escape
+// emoji sequences with their respective emojis.
 package discordemojimap
 
 import "regexp"
