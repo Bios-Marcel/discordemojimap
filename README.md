@@ -22,6 +22,6 @@ import (
 )
 
 func main() {
-    fmt.Printf("What a wonderful day %s.\n", discordemojimap.Replace(":sun_with_face:"))
+    fmt.Println(discordemojimap.Replace("What a wonderful day :sun_with_face:, am I right?"))
 }
 ```
