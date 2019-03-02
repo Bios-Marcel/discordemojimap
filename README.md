@@ -10,8 +10,8 @@ point.
 
 ## Usage
 
-The usage is quite simple, you just pass your inputstring and it replaces all
-valid cemoji sequences.
+The usage is quite simple, you just pass your input string and it replaces all
+valid emoji sequences with their respective emojis.
 
 ```go
 package main
