@@ -2,7 +2,10 @@
 // emoji sequences with their respective emojis.
 package discordemojimap
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 var emojiCodeRegex = regexp.MustCompile("(?s):[a-zA-Z0-9_]+:")
 
@@ -19,7 +22,7 @@ func Replace(input string) string {
 	}
 
 	replacedEmojis := emojiCodeRegex.ReplaceAllStringFunc(input, func(match string) string {
-		emojified, contains := emojiMap[match[1:len(match)-1]]
+		emojified, contains := emojiMap[strings.ToLower(match[1:len(match)-1])]
 		if !contains {
 			return match
 		}
