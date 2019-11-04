@@ -32,6 +32,13 @@ func GetEmojiCodes(emoji string) []string {
 	return codes
 }
 
+// GetEmoji returns the matching emoji or an empty string in case no match was
+// found for the given code.
+func GetEmoji(emojiCode string) string {
+	emoji, _ := emojiMap[emojiCode]
+	return emoji
+}
+
 // GetEntriesStartingWith returns all key-value pairs where the key(code)
 // is prefixed with the given string. If no matches were found, the map is
 // empty.
