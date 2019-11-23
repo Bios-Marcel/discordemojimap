@@ -1,6 +1,9 @@
 package discordemojimap
 
-var emojiMap = map[string]string{
+// EmojiMap is the full list of emoji codes to their respective unicode
+// symbols. This is map is public in order to allow memory efficient usage.
+// Be careful and do not adjust this map!
+var EmojiMap = map[string]string{
 	"grinning":                     "😀",
 	"grimacing":                    "😬",
 	"grin":                         "😁",

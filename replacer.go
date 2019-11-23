@@ -22,7 +22,7 @@ func Replace(input string) string {
 	}
 
 	replacedEmojis := emojiCodeRegex.ReplaceAllStringFunc(input, func(match string) string {
-		emojified, contains := emojiMap[strings.ToLower(match[1:len(match)-1])]
+		emojified, contains := EmojiMap[strings.ToLower(match[1:len(match)-1])]
 		if !contains {
 			return match
 		}

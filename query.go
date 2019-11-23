@@ -4,7 +4,7 @@ import "strings"
 
 // ContainsEmoji returns true if that emoji is mapped to one or more key.
 func ContainsEmoji(emoji string) bool {
-	for _, emojiInMap := range emojiMap {
+	for _, emojiInMap := range EmojiMap {
 		if emojiInMap == emoji {
 			return true
 		}
@@ -15,7 +15,7 @@ func ContainsEmoji(emoji string) bool {
 
 // ContainsCode returns true if that emojicode is mapped to an emoji.
 func ContainsCode(emojiCode string) bool {
-	_, contains := emojiMap[emojiCode]
+	_, contains := EmojiMap[emojiCode]
 	return contains
 }
 
@@ -23,7 +23,7 @@ func ContainsCode(emojiCode string) bool {
 // be found, then the resulting array will be empty.
 func GetEmojiCodes(emoji string) []string {
 	codes := make([]string, 0)
-	for code, emojiInMap := range emojiMap {
+	for code, emojiInMap := range EmojiMap {
 		if emojiInMap == emoji {
 			codes = append(codes, code)
 		}
@@ -35,7 +35,7 @@ func GetEmojiCodes(emoji string) []string {
 // GetEmoji returns the matching emoji or an empty string in case no match was
 // found for the given code.
 func GetEmoji(emojiCode string) string {
-	emoji, _ := emojiMap[emojiCode]
+	emoji, _ := EmojiMap[emojiCode]
 	return emoji
 }
 
@@ -50,7 +50,7 @@ func GetEntriesStartingWith(startsWith string) map[string]string {
 
 	searchTerm := strings.TrimSuffix(startsWith, ":")
 
-	for emojiCode, emoji := range emojiMap {
+	for emojiCode, emoji := range EmojiMap {
 		if strings.HasPrefix(emojiCode, searchTerm) {
 			matches[emojiCode] = emoji
 		}
