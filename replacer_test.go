@@ -1,85 +1,36 @@
 package discordemojimap
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestReplace(t *testing.T) {
-	tests := []struct {
-		name  string
-		input string
-		want  string
-	}{
-		{
-			name:  "just two double colons",
-			input: "::",
-			want:  "::",
-		},
-		{
-			name:  "just two double colons in the middle of a sentence",
-			input: "What a :: world.",
-			want:  "What a :: world.",
-		},
-		{
-			name:  "escaping currently isn't possible",
-			input: "I am sad \\:cry:",
-			want:  "I am sad \\😢",
-		},
-		{
-			name:  "no present emoji",
-			input: "I am sad",
-			want:  "I am sad",
-		},
-		{
-			name:  "no valid emoji",
-			input: "I am sad :cry",
-			want:  "I am sad :cry",
-		},
-		{
-			name:  "no valid emoji 2",
-			input: "I am sad cry:",
-			want:  "I am sad cry:",
-		},
-		{
-			name:  "no valid emoji 3",
-			input: "I am sad :crycry:",
-			want:  "I am sad :crycry:",
-		},
-		{
-			name:  "one valid emoji followed by an incomplete sequence",
-			input: "I am sad :cry:cry:",
-			want:  "I am sad 😢cry:",
-		},
-		{
-			name:  "simple insentence replacement",
-			input: "I am sad :cry:",
-			want:  "I am sad 😢",
-		},
-		{
-			name:  "simple single emoji replacement without text",
-			input: ":cry:",
-			want:  "😢",
-		},
-		{
-			name:  "Two equal emojis next to eachother",
-			input: ":cry::cry:",
-			want:  "😢😢",
-		},
-		{
-			name:  "Two equal emojis next to eachother with a spaces around",
-			input: " :cry: :cry: ",
-			want:  " 😢 😢 ",
-		},
-		{
-			name:  "Two different emojis next to eachother with a spaces around",
-			input: " :cry: :angry: ",
-			want:  " 😢 😠 ",
-		},
+	tests := []struct{ name, input, want string }{
+		{"Just two double colons", "::", "::"},
+		{"Just two double colons in the middle of a sentence", "What a :: world.", "What a :: world."},
+		{"Escaping currently isn't possible", "I am sad \\:cry:", "I am sad \\😢"},
+		{"No present emoji", "I am sad", "I am sad"},
+		{"No valid emoji", "I am sad :cry", "I am sad :cry"},
+		{"No valid emoji 2", "I am sad cry:", "I am sad cry:"},
+		{"No valid emoji 3", "I am sad :crycry:", "I am sad :crycry:"},
+		{"One valid emoji followed by an incomplete sequence", "I am sad :cry:cry:", "I am sad 😢cry:"},
+		{"Simple insentence replacement", "I am sad :cry:", "I am sad 😢"},
+		{"Simple single emoji replacement without text", ":cry:", "😢"},
+		{"Two equal emojis next to eachother", ":cry::cry:", "😢😢"},
+		{"Two equal emojis next to eachother with a spaces around", " :cry: :cry: ", " 😢 😢 "},
+		{"Two different emojis next to eachother with a spaces around", " :cry: :angry: ", " 😢 😠 "},
+		{"Unicode precision: rainbow flag emoji", "\U0001f3f3\uFE0F\u200D\U0001F308", "🏳️‍🌈"},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := Replace(tt.input); got != tt.want {
-				t.Errorf("Replace() = %v, want %v", got, tt.want)
-			}
-		})
+		if got := Replace(tt.input); got != tt.want {
+			t.Errorf("Replace() = %q, want %q", got, tt.want)
+		}
 	}
+}
+
+func ExampleReplace() {
+	fmt.Println(Replace("Hello World :sun_with_face:"))
+	// Output: Hello World 🌞
 }

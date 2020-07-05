@@ -4,14 +4,9 @@
 [![GoDoc](https://godoc.org/github.com/Bios-Marcel/discordemojimap?status.svg)](https://godoc.org/github.com/Bios-Marcel/discordemojimap)
 [![codecov](https://codecov.io/gh/Bios-Marcel/discordemojimap/branch/master/graph/badge.svg)](https://codecov.io/gh/Bios-Marcel/discordemojimap)
 
-This is the map of emojis that discord uses. However, I have left out
-different skin tones and such. A complete map might follow at some
-point.
+This is the map of emojis that Discord uses. This includes skin tones.
 
 ## Usage
-
-The usage is quite simple, you just pass your input string and it replaces all
-valid emoji sequences with their respective emojis.
 
 ```go
 package main
@@ -25,3 +20,14 @@ func main() {
     fmt.Println(discordemojimap.Replace("What a wonderful day :sun_with_face:, am I right?"))
 }
 ```
+
+## Generating
+
+To regenerate `mapping.go`, run these commands:
+
+```sh
+wget https://discord.com/assets/b38205c8085075585265.js
+go run ./cmd/extractmap -path ./b38205c8085075585265.js
+```
+
+This was last updated on the 4th of July, 2020.
