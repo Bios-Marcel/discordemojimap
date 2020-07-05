@@ -13,7 +13,7 @@ func ContainsEmoji(emoji string) bool {
 	return false
 }
 
-// ContainsCode returns true if that emojicode is mapped to an emoji.
+// ContainsCode returns true if emojiCode is mapped to an emoji.
 func ContainsCode(emojiCode string) bool {
 	_, contains := EmojiMap[emojiCode]
 	return contains
@@ -22,7 +22,8 @@ func ContainsCode(emojiCode string) bool {
 // GetEmojiCodes contains all codes for an emoji in an array. If no code could
 // be found, then the resulting array will be empty.
 func GetEmojiCodes(emoji string) []string {
-	codes := make([]string, 0)
+	var codes []string
+
 	for code, emojiInMap := range EmojiMap {
 		if emojiInMap == emoji {
 			codes = append(codes, code)
@@ -39,22 +40,26 @@ func GetEmoji(emojiCode string) string {
 	return emoji
 }
 
-// GetEntriesStartingWith returns all key-value pairs where the key(code)
-// is prefixed with the given string. If no matches were found, the map is
-// empty.
-func GetEntriesStartingWith(startsWith string) map[string]string {
-	matches := make(map[string]string)
-	if len(startsWith) == 0 {
-		return matches
+// GetEntriesWithPrefix returns a map of all found emojis with the given prefix.
+//
+// The function will search without accounting for trailing colons. As such, the
+// caller should strip trailing colons, if any. The function, however, will
+// search without case-sensitivity, as everything in the map is lower-cased.
+//
+// The function will return a nil map if prefix is empty.
+func GetEntriesWithPrefix(prefix string) (matches map[string]string) {
+	if prefix == "" {
+		return nil
 	}
 
-	searchTerm := strings.TrimSuffix(startsWith, ":")
+	matches = make(map[string]string)
+	prefix = strings.ToLower(prefix)
 
 	for emojiCode, emoji := range EmojiMap {
-		if strings.HasPrefix(emojiCode, searchTerm) {
+		if strings.HasPrefix(emojiCode, prefix) {
 			matches[emojiCode] = emoji
 		}
 	}
 
-	return matches
+	return
 }

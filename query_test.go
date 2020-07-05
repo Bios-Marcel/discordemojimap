@@ -1,6 +1,10 @@
 package discordemojimap
 
-import "testing"
+import (
+	"fmt"
+	"sort"
+	"testing"
+)
 
 func TestContainsEmoji(t *testing.T) {
 	if !ContainsEmoji("😀") {
@@ -16,6 +20,11 @@ func TestContainsEmoji(t *testing.T) {
 	}
 }
 
+func ExampleContainsEmoji() {
+	fmt.Println(ContainsEmoji("😀"))
+	// Output: true
+}
+
 func TestContainsEmojiCode(t *testing.T) {
 	if !ContainsCode("grinning") {
 		t.Error("The grinnign emoji '😀' should be in there as `grinning`.")
@@ -28,6 +37,11 @@ func TestContainsEmojiCode(t *testing.T) {
 	if ContainsEmoji("incorrect code") {
 		t.Error("An random string should not have been found.")
 	}
+}
+
+func ExampleContainsCode() {
+	fmt.Println(ContainsCode("grimacing"))
+	// Output: true
 }
 
 func TestGetEmojiCodes(t *testing.T) {
@@ -63,23 +77,35 @@ func TestGetEmojiCodes(t *testing.T) {
 	}
 }
 
-func TestGetEntriesStartingWith(t *testing.T) {
+func ExampleGetEmojiCodes() {
+	var codes = GetEmojiCodes("🦁")
+	sort.Strings(codes)
+	fmt.Println(codes)
+	// Output: [lion lion_face]
+}
+
+func TestGetEntriesWithPrefix(t *testing.T) {
 	lionTest(t, "lio")
 	lionTest(t, "lion")
 
-	matches := GetEntriesStartingWith("")
+	matches := GetEntriesWithPrefix("")
 	if len(matches) != 0 {
 		t.Errorf("Matches should have been empty, but were: %v", matches)
 	}
 
-	matches = GetEntriesStartingWith(" ")
+	matches = GetEntriesWithPrefix(" ")
 	if len(matches) != 0 {
 		t.Errorf("Matches should have been empty, but were: %v", matches)
 	}
 }
 
+func ExampleGetEntriesWithPrefix() {
+	fmt.Printf("%+v\n", GetEntriesWithPrefix("lio"))
+	// Output: map[lion:🦁 lion_face:🦁]
+}
+
 func lionTest(t *testing.T, input string) {
-	matches := GetEntriesStartingWith(input)
+	matches := GetEntriesWithPrefix(input)
 
 	if len(matches) != 2 {
 		t.Errorf("There should have been two matches for 'lio'.")
