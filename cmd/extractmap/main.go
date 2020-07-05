@@ -24,7 +24,10 @@ var EmojiMap = map[string]string {
 %s}
 `
 
-var emojiJSONRegex = regexp.MustCompile(`'{"people":.*}'`)
+// emojiJSONRegex matches the emoji JSON in a certain asset file. This JSON can
+// have one of its first object key as one of the strings matched in this OR'd
+// regex.
+var emojiJSONRegex = regexp.MustCompile(`'{"(people|activity|flags|food|nature|objects|symbols|travel)":.*}'`)
 
 type EmojiGroups map[string][]Emoji
 
@@ -109,12 +112,9 @@ func main() {
 			// Write the basic emojis.
 			emoji.GoSyntax(&mapping)
 
-			// Check if we have toned emojis
-			if emoji.HasDiversity || emoji.HasMultiDiversity {
-				// Write all toned emojis if we do.
-				for _, emoji := range emoji.Diversities {
-					emoji.GoSyntax(&mapping)
-				}
+			// Check if we have toned emojis. Write all of them if we do.
+			for _, emoji := range emoji.Diversities {
+				emoji.GoSyntax(&mapping)
 			}
 		}
 	}
