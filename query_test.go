@@ -2,7 +2,9 @@ package discordemojimap
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
+	"strings"
 	"testing"
 )
 
@@ -120,4 +122,82 @@ func lionTest(t *testing.T, input string) {
 	if lionTwo != "🦁" {
 		t.Errorf("The matches were expected to contain 'lion_face'.")
 	}
+}
+
+var emojiCodeRegex = regexp.MustCompile("(?s):[a-zA-Z0-9_]+:")
+
+// oldRegexReplace all emoji sequences contained in the discord emoji map with their
+// respective emojis.
+func oldRegexReplace(input string) string {
+	// Return the input as-is if it has less than a pair of colons.
+	if len(input) <= 2 {
+		return input
+	}
+
+	return emojiCodeRegex.ReplaceAllStringFunc(input, func(match string) string {
+		emojified, contains := EmojiMap[strings.ToLower(match[1:len(match)-1])]
+		if !contains {
+			return match
+		}
+
+		return emojified
+	})
+}
+
+var sink string
+var inputVariations = []string{
+	"",
+	":",
+	"::",
+	":a:",
+	"Hello",
+	"Hello :",
+	"abcdefghijklmnopqrstuvwxyz",
+	"What a :: world.",
+	":invalidinvalid:",
+	":sunglasses:",
+	":SUNGLASSES:",
+	"hello :sunglasses:",
+	"Hello :sunglasses::",
+	"Hello :sunglasses::lol",
+	":sunglasses: hello",
+	":sunglasses: :sunglasses:",
+	":sunglasses::sunglasses:",
+	":sunglasses: hello :sunglasses:",
+}
+
+func TestSame(t *testing.T) {
+	for _, test := range inputVariations {
+		a := oldRegexReplace(test)
+		b := Replace(test)
+		if a != b {
+			t.Errorf("Regex - NonRegex: %s - %s", a, b)
+		}
+	}
+}
+
+func BenchmarkOldRegexReplace(b *testing.B) {
+	var tmp string
+	for _, test := range inputVariations {
+		b.Run(test, func(b *testing.B) {
+			b.ReportAllocs()
+			for n := 0; n < b.N; n++ {
+				tmp = oldRegexReplace(test)
+			}
+		})
+	}
+	sink = tmp
+}
+
+func BenchmarkReplace(b *testing.B) {
+	var tmp string
+	for _, test := range inputVariations {
+		b.Run(test, func(b *testing.B) {
+			b.ReportAllocs()
+			for n := 0; n < b.N; n++ {
+				tmp = Replace(test)
+			}
+		})
+	}
+	sink = tmp
 }
