@@ -49,7 +49,7 @@ func Replace(input string) string {
 			}
 
 			if len(buffer) == 0 {
-				//Potentially allocate a bit more than required, but not having to reallocate
+				// Potentially allocate a bit more than required, but not having to reallocate
 				buffer = make([]byte, 0, len(input)-len(emojiSequence)-2+len(emojified))
 			}
 			buffer = append(buffer, input[lastEnd:start]...)
@@ -66,9 +66,7 @@ func Replace(input string) string {
 		return string(buffer)
 	}
 
-	if len(buffer) != 0 {
-		return string(buffer)
-	}
-
+	// Since lastEnd is always set if we've had a match, we don't need to
+	// check the buffer content anymore and can directly fallback to the input.
 	return input
 }
