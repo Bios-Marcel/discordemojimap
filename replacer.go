@@ -59,7 +59,8 @@ func Replace(input string) string {
 		}
 	}
 
-	// In case there's an open : left
+	// Since we only ever append after we've found a matching
+	// sequence, we still have to append what's left over.
 	if lastEnd > 0 {
 		buffer = append(buffer, input[lastEnd:]...)
 		return string(buffer)
