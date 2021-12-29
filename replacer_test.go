@@ -40,6 +40,9 @@ var inputVariations = []string{
 	"abcdefghijklmnopqrstuvwxyz",
 	"What a :: world.",
 	":invalidinvalid:",
+	"Hello :invalidinvalid:",
+	":invalidinvalid: Hello",
+	"Hello :invalidinvalid: Hello",
 	":sunglasses:",
 	":SUNGLASSES:",
 	"hello :sunglasses:",
@@ -51,7 +54,7 @@ var inputVariations = []string{
 	":sunglasses: hello :sunglasses:",
 }
 
-func TestSame(t *testing.T) {
+func TestNewReplaceAndOldReplaceBehaveTheSame(t *testing.T) {
 	for _, test := range inputVariations {
 		a := oldRegexReplace(test)
 		b := Replace(test)
