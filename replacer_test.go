@@ -1,6 +1,7 @@
 package discordemojimap
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -55,6 +56,26 @@ var inputVariations = [][2]string{
 	{"two valid emoji sequences with space inbetween", ":sunglasses: :sunglasses:"},
 	{"two valid emoji sequence with no space inbetween", ":sunglasses::sunglasses:"},
 	{"two valid emoji sequence with word inbetween", ":sunglasses: hello :sunglasses:"},
+}
+
+var emojiCodeRegex = regexp.MustCompile("(?s):[a-zA-Z0-9_]+:")
+
+// oldRegexReplace all emoji sequences contained in the discord emoji map with their
+// respective emojis.
+func oldRegexReplace(input string) string {
+	// Return the input as-is if it has less than a pair of colons.
+	if len(input) <= 2 {
+		return input
+	}
+
+	return emojiCodeRegex.ReplaceAllStringFunc(input, func(match string) string {
+		emojified, contains := EmojiMap[strings.ToLower(match[1:len(match)-1])]
+		if !contains {
+			return match
+		}
+
+		return emojified
+	})
 }
 
 func TestNewReplaceAndOldReplaceBehaveTheSame(t *testing.T) {
