@@ -1,6 +1,7 @@
 package discordemojimap
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -30,34 +31,36 @@ func TestReplace(t *testing.T) {
 }
 
 var sink string
-var inputVariations = []string{
-	"",
-	":",
-	"::",
-	":a:",
-	"Hello",
-	"Hello :",
-	"abcdefghijklmnopqrstuvwxyz",
-	"What a :: world.",
-	":invalidinvalid:",
-	"Hello :invalidinvalid:",
-	":invalidinvalid: Hello",
-	"Hello :invalidinvalid: Hello",
-	":sunglasses:",
-	":SUNGLASSES:",
-	"hello :sunglasses:",
-	"Hello :sunglasses::",
-	"Hello :sunglasses::lol",
-	":sunglasses: hello",
-	":sunglasses: :sunglasses:",
-	":sunglasses::sunglasses:",
-	":sunglasses: hello :sunglasses:",
+var inputVariations = [][2]string{
+	{"empty string", ""},
+	{"just a colon", ":"},
+	{"empty emoji sequence", "::"},
+	{"valid single letter emoji sequence", ":a:"},
+	{"no emoji sequence", "Hello"},
+	{"no emoji sequence, but single colon", "Hello :"},
+	{"a long word", "abcdefghijklmnopqrstuvwxyz"},
+	{"empty emoji sequence in middle of text", "What a :: world."},
+	{"standalone invalid emoji sequence", ":invalidinvalid:"},
+	{"invalid emoji sequence with space before and after", " :invalidinvalid: "},
+	{"invalid emoji sequence with word before", "Hello :invalidinvalid:"},
+	{"invalid emoji sequence with word after", ":invalidinvalid: Hello"},
+	{"invalid emoji sequence with word before and after", "Hello :invalidinvalid: Hello"},
+	{"very long string with invalid emoji sequence in the middle", strings.Repeat("a", 1000) + ":invalidinvalid:" + strings.Repeat("b", 1000)},
+	{"standalone valid emoji sequence", ":sunglasses:"},
+	{"standalone valid uppercased emoji sequence", ":SUNGLASSES:"},
+	{"valid emoji sequence with word before", "hello :sunglasses:"},
+	{"valid emoji sequence with word before and single colon after", "Hello :sunglasses::"},
+	{"valid emoji sequence with word before followed by single colon and more text", "Hello :sunglasses::lol"},
+	{"valid emoji sequence with word after", ":sunglasses: hello"},
+	{"two valid emoji sequences with space inbetween", ":sunglasses: :sunglasses:"},
+	{"two valid emoji sequence with no space inbetween", ":sunglasses::sunglasses:"},
+	{"two valid emoji sequence with word inbetween", ":sunglasses: hello :sunglasses:"},
 }
 
 func TestNewReplaceAndOldReplaceBehaveTheSame(t *testing.T) {
 	for _, test := range inputVariations {
-		a := oldRegexReplace(test)
-		b := Replace(test)
+		a := oldRegexReplace(test[1])
+		b := Replace(test[1])
 		if a != b {
 			t.Errorf("Regex - NonRegex: %s - %s", a, b)
 		}
@@ -67,10 +70,10 @@ func TestNewReplaceAndOldReplaceBehaveTheSame(t *testing.T) {
 func BenchmarkOldRegexReplace(b *testing.B) {
 	var tmp string
 	for _, test := range inputVariations {
-		b.Run(test, func(b *testing.B) {
+		b.Run(test[0], func(b *testing.B) {
 			b.ReportAllocs()
 			for n := 0; n < b.N; n++ {
-				tmp = oldRegexReplace(test)
+				tmp = oldRegexReplace(test[1])
 			}
 		})
 	}
@@ -80,10 +83,10 @@ func BenchmarkOldRegexReplace(b *testing.B) {
 func BenchmarkReplace(b *testing.B) {
 	var tmp string
 	for _, test := range inputVariations {
-		b.Run(test, func(b *testing.B) {
+		b.Run(test[0], func(b *testing.B) {
 			b.ReportAllocs()
 			for n := 0; n < b.N; n++ {
-				tmp = Replace(test)
+				tmp = Replace(test[1])
 			}
 		})
 	}
