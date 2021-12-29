@@ -36,8 +36,7 @@ func GetEmojiCodes(emoji string) []string {
 // GetEmoji returns the matching emoji or an empty string in case no match was
 // found for the given code.
 func GetEmoji(emojiCode string) string {
-	emoji, _ := EmojiMap[emojiCode]
-	return emoji
+	return EmojiMap[emojiCode]
 }
 
 // GetEntriesWithPrefix returns a map of all found emojis with the given prefix.
