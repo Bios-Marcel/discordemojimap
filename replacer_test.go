@@ -30,6 +30,64 @@ func TestReplace(t *testing.T) {
 	}
 }
 
+var sink string
+var inputVariations = []string{
+	"",
+	":",
+	"::",
+	":a:",
+	"Hello",
+	"Hello :",
+	"abcdefghijklmnopqrstuvwxyz",
+	"What a :: world.",
+	":invalidinvalid:",
+	":sunglasses:",
+	":SUNGLASSES:",
+	"hello :sunglasses:",
+	"Hello :sunglasses::",
+	"Hello :sunglasses::lol",
+	":sunglasses: hello",
+	":sunglasses: :sunglasses:",
+	":sunglasses::sunglasses:",
+	":sunglasses: hello :sunglasses:",
+}
+
+func TestSame(t *testing.T) {
+	for _, test := range inputVariations {
+		a := oldRegexReplace(test)
+		b := Replace(test)
+		if a != b {
+			t.Errorf("Regex - NonRegex: %s - %s", a, b)
+		}
+	}
+}
+
+func BenchmarkOldRegexReplace(b *testing.B) {
+	var tmp string
+	for _, test := range inputVariations {
+		b.Run(test, func(b *testing.B) {
+			b.ReportAllocs()
+			for n := 0; n < b.N; n++ {
+				tmp = oldRegexReplace(test)
+			}
+		})
+	}
+	sink = tmp
+}
+
+func BenchmarkReplace(b *testing.B) {
+	var tmp string
+	for _, test := range inputVariations {
+		b.Run(test, func(b *testing.B) {
+			b.ReportAllocs()
+			for n := 0; n < b.N; n++ {
+				tmp = Replace(test)
+			}
+		})
+	}
+	sink = tmp
+}
+
 func ExampleReplace() {
 	fmt.Println(Replace("Hello World :sun_with_face:"))
 	// Output: Hello World 🌞
