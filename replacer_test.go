@@ -1,7 +1,6 @@
 package discordemojimap
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -86,9 +85,4 @@ func BenchmarkReplace(b *testing.B) {
 		})
 	}
 	sink = tmp
-}
-
-func ExampleReplace() {
-	fmt.Println(Replace("Hello World :sun_with_face:"))
-	// Output: Hello World 🌞
 }
