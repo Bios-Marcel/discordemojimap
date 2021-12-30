@@ -1,9 +1,11 @@
 package discordemojimap
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"testing"
+	"unicode"
 )
 
 func TestReplace(t *testing.T) {
@@ -36,6 +38,7 @@ var inputVariations = [][2]string{
 	{"empty string", ""},
 	{"just a colon", ":"},
 	{"empty emoji sequence", "::"},
+	{"invalid emoji sequence with invalid characters", ":sunglassesö:sunglasses:"},
 	{"valid single letter emoji sequence", ":a:"},
 	{"no emoji sequence", "Hello"},
 	{"no emoji sequence, but single colon", "Hello :"},
@@ -47,6 +50,7 @@ var inputVariations = [][2]string{
 	{"invalid emoji sequence with word after", ":invalidinvalid: Hello"},
 	{"invalid emoji sequence with word before and after", "Hello :invalidinvalid: Hello"},
 	{"very long string with invalid emoji sequence in the middle", strings.Repeat("a", 1000) + ":invalidinvalid:" + strings.Repeat("b", 1000)},
+	{"very long string with valid emoji sequence in the middle", strings.Repeat("a", 1000) + ":sunglasses:" + strings.Repeat("b", 1000)},
 	{"standalone valid emoji sequence", ":sunglasses:"},
 	{"standalone valid uppercased emoji sequence", ":SUNGLASSES:"},
 	{"valid emoji sequence with word before", "hello :sunglasses:"},
@@ -76,6 +80,17 @@ func oldRegexReplace(input string) string {
 
 		return emojified
 	})
+}
+
+func TestThatPartOfARuneCannotBeColon(t *testing.T) {
+	for i := '~'; i <= unicode.MaxRune; i++ {
+		data := string(i)
+		for j := 0; j < len(data); j++ {
+			if data[j] == ':' {
+				panic(fmt.Sprintf(": found in %s at index %d", string(data), j))
+			}
+		}
+	}
 }
 
 func TestNewReplaceAndOldReplaceBehaveTheSame(t *testing.T) {
