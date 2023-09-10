@@ -26,8 +26,8 @@ func main() {
 To regenerate `mapping.go`, run these commands:
 
 ```sh
-wget https://discord.com/assets/b38205c8085075585265.js
-go run ./cmd/extractmap -path ./b38205c8085075585265.js
+wget http://discord.com/assets/5c193e4366261ef233e1.js
+go run ./cmd/extractmap -path ./5c193e4366261ef233e1.js -out ./mapping.go
 ```
 
-This was last updated on the 4th of July, 2020.
+This was last updated on September 10th, 2023.
