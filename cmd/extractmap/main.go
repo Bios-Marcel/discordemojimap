@@ -20,6 +20,8 @@ import (
 
 const goCode = `package discordemojimap
 
+// This file is auto generated: DO NOT EDIT.
+
 var EmojiMap = map[string]string {
 %s}
 `
@@ -32,7 +34,7 @@ var emojiJSONRegex = regexp.MustCompile(`'{"(people|activity|flags|food|nature|o
 type EmojiGroups map[string][]Emoji
 
 func (eg EmojiGroups) GroupNames() []string {
-	var keys = make([]string, 0, len(eg))
+	keys := make([]string, 0, len(eg))
 	for key := range eg {
 		keys = append(keys, key)
 	}
@@ -66,9 +68,9 @@ func (e Emoji) GoSyntax(w io.Writer) (n int, err error) {
 }
 
 func main() {
-	var path = ""
+	path := ""
 	flag.StringVar(&path, "path", "", "path should be a relative or absolute path to the file to create the mapping from.")
-	var out = "mapping.go"
+	out := "mapping.go"
 	flag.StringVar(&out, "out", out, "output file path")
 
 	flag.Parse()
@@ -103,7 +105,7 @@ func main() {
 
 	// Even though maps are unordered, we'd preferably still want a reproducible
 	// output.
-	var names = groups.GroupNames()
+	names := groups.GroupNames()
 	sort.Strings(names)
 
 	var mapping strings.Builder
@@ -119,7 +121,7 @@ func main() {
 		}
 	}
 
-	f, err := os.OpenFile(out, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(out, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 	if err != nil {
 		log.Fatalln("Failed to open output:", err)
 	}

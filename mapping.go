@@ -1,5 +1,7 @@
 package discordemojimap
 
+// This file is auto generated: DO NOT EDIT
+
 var EmojiMap = map[string]string {
 	"soccer": "\u26bd",
 	"basketball": "\U0001f3c0",
