@@ -30,6 +30,14 @@ func TestContainsEmojiCode(t *testing.T) {
 		t.Error("The grinnign emoji '😀' should be in there as `grinning`.")
 	}
 
+	if !ContainsCode("GRINNING") {
+		t.Error("The grinnign emoji '😀' should be in there as `grinning`. (Uppercase)")
+	}
+
+	if !ContainsCode("gRINNING") {
+		t.Error("The grinnign emoji '😀' should be in there as `grinning`. (Uppercase except first rune)")
+	}
+
 	if ContainsEmoji("") {
 		t.Error("An empty string should not have been found.")
 	}
@@ -78,7 +86,7 @@ func TestGetEmojiCodes(t *testing.T) {
 }
 
 func ExampleGetEmojiCodes() {
-	var codes = GetEmojiCodes("🦁")
+	codes := GetEmojiCodes("🦁")
 	sort.Strings(codes)
 	fmt.Println(codes)
 	// Output: [lion lion_face]
@@ -87,6 +95,10 @@ func ExampleGetEmojiCodes() {
 func TestGetEntriesWithPrefix(t *testing.T) {
 	lionTest(t, "lio")
 	lionTest(t, "lion")
+	lionTest(t, "LIO")
+	lionTest(t, "LION")
+	lionTest(t, "lIO")
+	lionTest(t, "lION")
 
 	matches := GetEntriesWithPrefix("")
 	if len(matches) != 0 {
