@@ -1,11 +1,9 @@
 package discordemojimap
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 	"testing"
-	"unicode"
 )
 
 func TestReplace(t *testing.T) {
@@ -86,17 +84,6 @@ func oldRegexReplace(input string) string {
 
 		return emojified
 	})
-}
-
-func TestThatPartOfARuneCannotBeColon(t *testing.T) {
-	for i := '~'; i <= unicode.MaxRune; i++ {
-		data := string(i)
-		for j := 0; j < len(data); j++ {
-			if data[j] == ':' {
-				panic(fmt.Sprintf(": found in %s at index %d", string(data), j))
-			}
-		}
-	}
 }
 
 func TestNewReplaceAndOldReplaceBehaveTheSame(t *testing.T) {

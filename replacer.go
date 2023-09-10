@@ -25,12 +25,11 @@ func Replace(input string) string {
 	// Instead of for ranging over the string, we treat it as a byte array to
 	// save CPU cycles.
 	for index := 0; index < len(input); index++ {
-		char := input[index]
-		// Even though we might get codepoints out of the ascii range, one
-		// byte of a unicode codepoint can never be a colon. This is proven
-		// by the test TestThatPartOfARuneCannotBeColon and probably wouldn't
-		// need proving if I understood unicode and UTF-8 better.
-		if char != ':' {
+		// Single CodePoint UTF-8 is equal to ASCII 0-127. Meaning that
+		// everything bigger than 128 is a multi-byte sequence. And no byte of
+		// a multi-byte sequence is equal to 58 (ASCII for ":") or any other
+		// byte for that matter.
+		if input[index] != ':' {
 			continue
 		}
 
@@ -87,7 +86,7 @@ func toLower(input string) string {
 	var out []byte
 	for i := 0; i < len(input); i++ {
 		c := input[i]
-		if 'A' <= c && c <= 'Z' {
+		if c >= 'A' && c <= 'Z' {
 			if out == nil {
 				out = []byte(input)
 			}
