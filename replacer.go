@@ -2,7 +2,7 @@
 // emoji sequences with their respective emojis.
 package discordemojimap
 
-// Replace all emoji sequences contained in the discord emoji map with their
+// Replace all emoji sequences contained in the emoji map with their
 // respective emojis. For example:
 //
 //	fmt.Println(Replace("Hello World :sun_with_face:"))
@@ -57,7 +57,8 @@ func Replace(input string) string {
 		}
 
 		if len(buffer) == 0 {
-			// Potentially allocate a bit more than required, but not having to reallocate
+			// If we have more than one emoji sequence, we might end up with a
+			// buffer bigger than necessary, but that's fine.
 			buffer = make([]byte, 0, len(input)-len(emojiSequence)-2+len(emojified))
 		}
 		buffer = append(buffer, input[lastEnd:start]...)
