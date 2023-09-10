@@ -2,21 +2,46 @@ package discordemojimap
 
 import (
 	"fmt"
+	"reflect"
 	"sort"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestContainsEmoji(t *testing.T) {
-	if !ContainsEmoji("😀") {
-		t.Error("Emoji '😀' should have been found.")
+	tests := []struct {
+		name  string
+		emoji string
+		want  bool
+	}{
+		{
+			name:  "empty string",
+			emoji: "",
+			want:  false,
+		},
+		{
+			name:  "incorrect emoji",
+			emoji: "agfkbjasjnkfajnksf",
+			want:  false,
+		},
+		{
+			name:  "correct emoji",
+			emoji: "😀",
+			want:  true,
+		},
+		{
+			name:  "correct emoji with skin tone",
+			emoji: "👍🏻",
+			want:  true,
+		},
 	}
-
-	if ContainsEmoji("") {
-		t.Error("An empty string should not have been found.")
-	}
-
-	if ContainsEmoji("OwO") {
-		t.Error("An random string should not have been found.")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ContainsEmoji(tt.emoji); got != tt.want {
+				t.Errorf("ContainsEmoji() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
@@ -25,25 +50,49 @@ func ExampleContainsEmoji() {
 	// Output: true
 }
 
-func TestContainsEmojiCode(t *testing.T) {
-	if !ContainsCode("grinning") {
-		t.Error("The grinnign emoji '😀' should be in there as `grinning`.")
+func TestContainsCode(t *testing.T) {
+	tests := []struct {
+		name      string
+		emojiCode string
+		want      bool
+	}{
+		{
+			name:      "empty string",
+			emojiCode: "",
+			want:      false,
+		},
+		{
+			name:      "incorrect code",
+			emojiCode: "agfkbjasjnkfajnksf",
+			want:      false,
+		},
+		{
+			name:      "correct code",
+			emojiCode: "grimacing",
+			want:      true,
+		},
+		{
+			name:      "correct code with uppercase",
+			emojiCode: "GRIMACING",
+			want:      true,
+		},
+		{
+			name:      "correct code with uppercase except first rune",
+			emojiCode: "gRIMACING",
+			want:      true,
+		},
+		{
+			name:      "correct code with uppercase except last rune",
+			emojiCode: "GRIMACINg",
+			want:      true,
+		},
 	}
-
-	if !ContainsCode("GRINNING") {
-		t.Error("The grinnign emoji '😀' should be in there as `grinning`. (Uppercase)")
-	}
-
-	if !ContainsCode("gRINNING") {
-		t.Error("The grinnign emoji '😀' should be in there as `grinning`. (Uppercase except first rune)")
-	}
-
-	if ContainsEmoji("") {
-		t.Error("An empty string should not have been found.")
-	}
-
-	if ContainsEmoji("incorrect code") {
-		t.Error("An random string should not have been found.")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ContainsCode(tt.emojiCode); got != tt.want {
+				t.Errorf("ContainsCode() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
@@ -53,35 +102,42 @@ func ExampleContainsCode() {
 }
 
 func TestGetEmojiCodes(t *testing.T) {
-	matches := GetEmojiCodes("🦁")
-	if len(matches) != 2 {
-		t.Error("There should have been two matches for '🦁'.")
+	tests := []struct {
+		emoji string
+		want  []string
+	}{
+		{
+			emoji: "",
+		},
+		{
+			emoji: " ",
+		},
+		{
+			emoji: "asdkfbakfabjnk",
+		},
+		{
+			emoji: "🛝",
+			want:  []string{"playground_slide"},
+		},
+		{
+			emoji: "🦁",
+			want:  []string{"lion", "lion_face"},
+		},
+		{
+			emoji: "👍🏻",
+			want:  []string{"+1_tone1", "thumbup_tone1", "thumbsup_tone1"},
+		},
+		{
+			emoji: "👍",
+			want:  []string{"+1", "thumbup", "thumbsup"},
+		},
 	}
-
-	if matches[0] != "lion" && matches[1] != "lion" {
-		t.Errorf("None of the returned values was 'lion'. Result was: %v", matches)
-	}
-
-	if matches[0] != "lion_face" && matches[1] != "lion_face" {
-		t.Errorf("None of the returned values was 'lion_face'. Result was: %v", matches)
-	}
-
-	matchesNoneExpected := GetEmojiCodes(" ")
-
-	if len(matchesNoneExpected) != 0 {
-		t.Errorf("Input should have been empty, but was: %v", matchesNoneExpected)
-	}
-
-	matchesNoneExpected = GetEmojiCodes("")
-
-	if len(matchesNoneExpected) != 0 {
-		t.Errorf("Input should have been empty, but was: %v", matchesNoneExpected)
-	}
-
-	matchesNoneExpected = GetEmojiCodes("Invalid input")
-
-	if len(matchesNoneExpected) != 0 {
-		t.Errorf("Input should have been empty, but was: %v", matchesNoneExpected)
+	for index, tt := range tests {
+		t.Run(fmt.Sprint(index), func(t *testing.T) {
+			if got := GetEmojiCodes(tt.emoji); !assert.ElementsMatch(t, got, tt.want) {
+				t.Errorf("GetEmojiCodes() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
@@ -93,43 +149,34 @@ func ExampleGetEmojiCodes() {
 }
 
 func TestGetEntriesWithPrefix(t *testing.T) {
-	lionTest(t, "lio")
-	lionTest(t, "lion")
-	lionTest(t, "LIO")
-	lionTest(t, "LION")
-	lionTest(t, "lIO")
-	lionTest(t, "lION")
-
-	matches := GetEntriesWithPrefix("")
-	if len(matches) != 0 {
-		t.Errorf("Matches should have been empty, but were: %v", matches)
+	tests := []struct {
+		prefix []string
+		want   map[string]string
+	}{
+		{
+			prefix: []string{""},
+			want:   map[string]string{},
+		},
+		{
+			prefix: []string{"lio", "LIO", "lion", "LION", "lIO", "LIo"},
+			want: map[string]string{
+				"lion":      "🦁",
+				"lion_face": "🦁",
+			},
+		},
 	}
-
-	matches = GetEntriesWithPrefix(" ")
-	if len(matches) != 0 {
-		t.Errorf("Matches should have been empty, but were: %v", matches)
+	for index, tt := range tests {
+		t.Run(fmt.Sprint(index), func(t *testing.T) {
+			for _, prefix := range tt.prefix {
+				if got := GetEntriesWithPrefix(prefix); !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("GetEntriesWithPrefix() = %v, want %v", got, tt.want)
+				}
+			}
+		})
 	}
 }
 
 func ExampleGetEntriesWithPrefix() {
 	fmt.Printf("%+v\n", GetEntriesWithPrefix("lio"))
 	// Output: map[lion:🦁 lion_face:🦁]
-}
-
-func lionTest(t *testing.T, input string) {
-	matches := GetEntriesWithPrefix(input)
-
-	if len(matches) != 2 {
-		t.Errorf("There should have been two matches for 'lio'.")
-	}
-
-	lionOne := matches["lion"]
-	if lionOne != "🦁" {
-		t.Errorf("The matches were expected to contain 'lion'.")
-	}
-
-	lionTwo := matches["lion_face"]
-	if lionTwo != "🦁" {
-		t.Errorf("The matches were expected to contain 'lion_face'.")
-	}
 }
