@@ -2,8 +2,6 @@
 // emoji sequences with their respective emojis.
 package discordemojimap
 
-import "strings"
-
 // Replace all emoji sequences contained in the discord emoji map with their
 // respective emojis. For example:
 //
@@ -36,34 +34,26 @@ func Replace(input string) string {
 			continue
 		}
 
-		if start == -1 {
-			start = index
-			continue
-		}
-
-		// Occurence of something like "::+1:" in which case we want to ignore
-		// the first colon and start again from the next one, as it might be a
-		// valid sequence.
-		if index-start == 1 {
+		// Start of new sequence or an occurence of something like "::+1:" in
+		// which case we want to ignore the first colon and start again from
+		// the next one, as it might be a valid sequence.
+		if start == -1 || index-start == 1 {
 			start = index
 			continue
 		}
 
 		emojiSequence := input[start+1 : index]
-		emojified, contains := EmojiMap[emojiSequence]
-		if !contains {
-			// Since the previous check is case sensitive, we do the same in a case
-			// insensitive manner to make use of the best case performance.
-			emojiSequence = strings.ToLower(input[start+1 : index])
-			emojified, contains = EmojiMap[emojiSequence]
-			if !contains {
-				start = -1
-				// Solves cases such as this ":sunglassesö:sunglasses:", where
-				// the sequence wouldn't be sucessfully resolved otherwise.
-				// Danke Marvin.
-				index--
-				continue
-			}
+		if lowered := toLower(emojiSequence); lowered != "" {
+			emojiSequence = lowered
+		}
+		emojified := EmojiMap[emojiSequence]
+		if emojified == "" {
+			start = -1
+			// Solves cases such as this ":sunglassesö:sunglasses:", where
+			// the sequence wouldn't be sucessfully resolved otherwise.
+			// Danke Marvin.
+			index--
+			continue
 		}
 
 		if len(buffer) == 0 {
@@ -86,4 +76,26 @@ func Replace(input string) string {
 	// Since lastEnd is always set if we've had a match, we don't need to
 	// check the buffer content anymore and can directly fallback to the input.
 	return input
+}
+
+// toLower is an optimised variant of strings.ToLower. It only works for ASCII
+// and returns an empty string if nothing has changed, this reduces return
+// parameters, which in turn improves performance. It also avoids allocations
+// where possible.
+func toLower(input string) string {
+	var out []byte
+	for i := 0; i < len(input); i++ {
+		c := input[i]
+		if 'A' <= c && c <= 'Z' {
+			if out == nil {
+				out = []byte(input)
+			}
+			out[i] = c + 32
+		}
+	}
+
+	if out != nil {
+		return string(out)
+	}
+	return ""
 }

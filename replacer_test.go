@@ -19,7 +19,9 @@ func TestReplace(t *testing.T) {
 		{"No valid emoji 2", "I am sad cry:", "I am sad cry:"},
 		{"No valid emoji 3", "I am sad :crycry:", "I am sad :crycry:"},
 		{"One valid emoji followed by an incomplete sequence", "I am sad :cry:cry:", "I am sad 😢cry:"},
-		{"Simple insentence replacement", "I am sad :cry:", "I am sad 😢"},
+		{"Simple in-sentence replacement", "I am sad :cry:", "I am sad 😢"},
+		{"Simple in-sentence replacement, but single letter uppercase", "I am sad :cRy:", "I am sad 😢"},
+		{"Simple in-sentence replacement, but all uppercase", "I am sad :CRY:", "I am sad 😢"},
 		{"Simple single emoji replacement without text", ":cry:", "😢"},
 		{"Two equal emojis next to eachother", ":cry::cry:", "😢😢"},
 		{"Two equal emojis next to eachother with a spaces around", " :cry: :cry: ", " 😢 😢 "},
@@ -61,6 +63,9 @@ var inputVariations = [][2]string{
 	{"two valid emoji sequences with space inbetween", ":sunglasses: :sunglasses:"},
 	{"two valid emoji sequence with no space inbetween", ":sunglasses::sunglasses:"},
 	{"two valid emoji sequence with word inbetween", ":sunglasses: hello :sunglasses:"},
+	{"one mismatch", ":UPPER:"},
+	{"one match upper", ":CRY:"},
+	{"long with all kinds of cases", "I am :man_technologist: :extended_ascii_ý: :invalid_sequence: :umlautö: from :flag_for_turkey:. Tests are :thumbs_up:"},
 }
 
 var emojiCodeRegex = regexp.MustCompile("(?s):[a-zA-Z0-9_]+:")
@@ -128,4 +133,22 @@ func BenchmarkReplace(b *testing.B) {
 		})
 	}
 	sink = tmp
+}
+
+func Test_toLower(t *testing.T) {
+	if toLower("A") != "a" {
+		t.Fatal("toLower is broken", toLower("A"))
+	}
+	if toLower("Z") != "z" {
+		t.Fatal("toLower is broken", toLower("Z"))
+	}
+	if toLower("a") != "" {
+		t.Fatal("toLower is broken", toLower("a"))
+	}
+	if toLower("z") != "" {
+		t.Fatal("toLower is broken", toLower("z"))
+	}
+	if toLower("1") != "" {
+		t.Fatal("toLower is broken", toLower("1"))
+	}
 }
