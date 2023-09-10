@@ -39,7 +39,13 @@ func GetEmojiCodes(emoji string) []string {
 
 // GetEmoji returns the matching emoji or an empty string in case no match was
 // found for the given code.
+//
+// The function will search without accounting for colons. The search
+// is case-insensitive.
 func GetEmoji(emojiCode string) string {
+	if lowered := toLower(emojiCode); lowered != "" {
+		return EmojiMap[lowered]
+	}
 	return EmojiMap[emojiCode]
 }
 

@@ -180,3 +180,59 @@ func ExampleGetEntriesWithPrefix() {
 	fmt.Printf("%+v\n", GetEntriesWithPrefix("lio"))
 	// Output: map[lion:🦁 lion_face:🦁]
 }
+
+func TestGetEmoji(t *testing.T) {
+	tests := []struct {
+		emojiCode string
+		want      string
+	}{
+		{
+			emojiCode: "",
+			want:      "",
+		},
+		{
+			emojiCode: " ",
+			want:      "",
+		},
+		{
+			emojiCode: "lio",
+			want:      "",
+		},
+		{
+			emojiCode: "asdkfbakfabjnk",
+			want:      "",
+		},
+		{
+			emojiCode: "playground_slide",
+			want:      "🛝",
+		},
+		{
+			emojiCode: "lion",
+			want:      "🦁",
+		},
+		{
+			emojiCode: "LION",
+			want:      "🦁",
+		},
+		{
+			emojiCode: "lION",
+			want:      "🦁",
+		},
+		{
+			emojiCode: "LIOn",
+			want:      "🦁",
+		},
+	}
+	for index, tt := range tests {
+		t.Run(fmt.Sprint(index), func(t *testing.T) {
+			if got := GetEmoji(tt.emojiCode); got != tt.want {
+				t.Errorf("GetEmoji() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func ExampleGetEmoji() {
+	fmt.Println(GetEmoji("lion"))
+	// Output: 🦁
+}
