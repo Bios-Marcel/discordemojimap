@@ -10,6 +10,7 @@ import (
 
 func TestReplace(t *testing.T) {
 	tests := []struct{ name, input, want string }{
+		{"unnecessary colon before valid code", "::+1:", ":👍"},
 		{"Just two double colons", "::", "::"},
 		{"Just two double colons in the middle of a sentence", "What a :: world.", "What a :: world."},
 		{"Escaping currently isn't possible", "I am sad \\:cry:", "I am sad \\😢"},

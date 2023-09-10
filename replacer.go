@@ -6,8 +6,10 @@ import "strings"
 
 // Replace all emoji sequences contained in the discord emoji map with their
 // respective emojis. For example:
-//     fmt.Println(Replace("Hello World :sun_with_face:"))
-//     //Output: Hello World 🌞
+//
+//	fmt.Println(Replace("Hello World :sun_with_face:"))
+//	//Output: Hello World 🌞
+//
 // This function is optimized for lowercased emoji sequence, meaning that
 // sequences such as ":SUNGLASSES:" will consume slightly more memory and be
 // slightly slower. However, the impact should be insignificant in most cases.
@@ -39,9 +41,11 @@ func Replace(input string) string {
 			continue
 		}
 
-		// Occurence of something like "Hello :: World", in which case we needn't do anything.
+		// Occurence of something like "::+1:" in which case we want to ignore
+		// the first colon and start again from the next one, as it might be a
+		// valid sequence.
 		if index-start == 1 {
-			start = -1
+			start = index
 			continue
 		}
 
