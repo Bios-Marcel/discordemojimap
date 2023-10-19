@@ -81,21 +81,27 @@ func Replace(input string) string {
 // toLower is an optimised variant of strings.ToLower. It only works for ASCII
 // and returns an empty string if nothing has changed, this reduces return
 // parameters, which in turn improves performance. It also avoids allocations
-// where possible.
+// and bound checks where possible.
+//
+//go:noinline While inlinable, inlining reduce performance. WHY? NO CLUE
 func toLower(input string) string {
-	var out []byte
-	for i := 0; i < len(input); i++ {
+	for i := len(input) - 1; i >= 0; i-- {
 		c := input[i]
 		if c >= 'A' && c <= 'Z' {
-			if out == nil {
-				out = []byte(input)
+			out := []byte(input)
+			i = len(input) - 1
+			// Eliminate further bound checks, since we iterate backwards, we
+			// know that i >= 0 and our current i is the highest we'll check.
+			_ = out[i]
+			for ; i >= 0; i-- {
+				c = input[i]
+				if c >= 'A' && c <= 'Z' {
+					out[i] = c + 32
+				}
 			}
-			out[i] = c + 32
-		}
-	}
 
-	if out != nil {
-		return string(out)
+			return string(out)
+		}
 	}
 	return ""
 }
