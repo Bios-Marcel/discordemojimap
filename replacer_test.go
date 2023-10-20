@@ -123,19 +123,26 @@ func BenchmarkReplace(b *testing.B) {
 }
 
 func Test_toLower(t *testing.T) {
-	if toLower("A") != "a" {
-		t.Fatal("toLower is broken", toLower("A"))
+	inputs := [][2]string{
+		{"A", "a"},
+		{"a", ""},
+		{"F", "f"},
+		{"f", ""},
+		{"Z", "z"},
+		{"z", ""},
+		{"1", ""},
+		{":", ""},
+		{" ", ""},
+		{"", ""},
+		{"ö", ""},
+		// Only base ASCII is supported
+		{"Ö", ""},
+		{"👍", ""},
 	}
-	if toLower("Z") != "z" {
-		t.Fatal("toLower is broken", toLower("Z"))
-	}
-	if toLower("a") != "" {
-		t.Fatal("toLower is broken", toLower("a"))
-	}
-	if toLower("z") != "" {
-		t.Fatal("toLower is broken", toLower("z"))
-	}
-	if toLower("1") != "" {
-		t.Fatal("toLower is broken", toLower("1"))
+
+	for _, input := range inputs {
+		if got := toLower(input[0]); got != input[1] {
+			t.Errorf("toLower(%q) = %q, want %q", input[0], got, input[1])
+		}
 	}
 }
