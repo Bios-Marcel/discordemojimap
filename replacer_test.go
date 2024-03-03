@@ -34,37 +34,39 @@ func TestReplace(t *testing.T) {
 	}
 }
 
-var sink string
-var inputVariations = [][2]string{
-	{"empty string", ""},
-	{"just a colon", ":"},
-	{"empty emoji sequence", "::"},
-	{"invalid emoji sequence with invalid characters", ":sunglassesö:sunglasses:"},
-	{"valid single letter emoji sequence", ":a:"},
-	{"no emoji sequence", "Hello"},
-	{"no emoji sequence, but single colon", "Hello :"},
-	{"a long word", "abcdefghijklmnopqrstuvwxyz"},
-	{"empty emoji sequence in middle of text", "What a :: world."},
-	{"standalone invalid emoji sequence", ":invalidinvalid:"},
-	{"invalid emoji sequence with space before and after", " :invalidinvalid: "},
-	{"invalid emoji sequence with word before", "Hello :invalidinvalid:"},
-	{"invalid emoji sequence with word after", ":invalidinvalid: Hello"},
-	{"invalid emoji sequence with word before and after", "Hello :invalidinvalid: Hello"},
-	{"very long string with invalid emoji sequence in the middle", strings.Repeat("a", 1000) + ":invalidinvalid:" + strings.Repeat("b", 1000)},
-	{"very long string with valid emoji sequence in the middle", strings.Repeat("a", 1000) + ":sunglasses:" + strings.Repeat("b", 1000)},
-	{"standalone valid emoji sequence", ":sunglasses:"},
-	{"standalone valid uppercased emoji sequence", ":SUNGLASSES:"},
-	{"valid emoji sequence with word before", "hello :sunglasses:"},
-	{"valid emoji sequence with word before and single colon after", "Hello :sunglasses::"},
-	{"valid emoji sequence with word before followed by single colon and more text", "Hello :sunglasses::lol"},
-	{"valid emoji sequence with word after", ":sunglasses: hello"},
-	{"two valid emoji sequences with space inbetween", ":sunglasses: :sunglasses:"},
-	{"two valid emoji sequence with no space inbetween", ":sunglasses::sunglasses:"},
-	{"two valid emoji sequence with word inbetween", ":sunglasses: hello :sunglasses:"},
-	{"one mismatch", ":UPPER:"},
-	{"one match upper", ":CRY:"},
-	{"long with all kinds of cases", "I am :man_technologist: :extended_ascii_ý: :invalid_sequence: :umlautö: from :flag_for_turkey:. Tests are :thumbs_up:"},
-}
+var (
+	sink            string
+	inputVariations = [][2]string{
+		{"empty string", ""},
+		{"just a colon", ":"},
+		{"empty emoji sequence", "::"},
+		{"invalid emoji sequence with invalid characters", ":sunglassesö:sunglasses:"},
+		{"valid single letter emoji sequence", ":a:"},
+		{"no emoji sequence", "Hello"},
+		{"no emoji sequence, but single colon", "Hello :"},
+		{"a long word", "abcdefghijklmnopqrstuvwxyz"},
+		{"empty emoji sequence in middle of text", "What a :: world."},
+		{"standalone invalid emoji sequence", ":invalidinvalid:"},
+		{"invalid emoji sequence with space before and after", " :invalidinvalid: "},
+		{"invalid emoji sequence with word before", "Hello :invalidinvalid:"},
+		{"invalid emoji sequence with word after", ":invalidinvalid: Hello"},
+		{"invalid emoji sequence with word before and after", "Hello :invalidinvalid: Hello"},
+		{"very long string with invalid emoji sequence in the middle", strings.Repeat("a", 1000) + ":invalidinvalid:" + strings.Repeat("b", 1000)},
+		{"very long string with valid emoji sequence in the middle", strings.Repeat("a", 1000) + ":sunglasses:" + strings.Repeat("b", 1000)},
+		{"standalone valid emoji sequence", ":sunglasses:"},
+		{"standalone valid uppercased emoji sequence", ":SUNGLASSES:"},
+		{"valid emoji sequence with word before", "hello :sunglasses:"},
+		{"valid emoji sequence with word before and single colon after", "Hello :sunglasses::"},
+		{"valid emoji sequence with word before followed by single colon and more text", "Hello :sunglasses::lol"},
+		{"valid emoji sequence with word after", ":sunglasses: hello"},
+		{"two valid emoji sequences with space inbetween", ":sunglasses: :sunglasses:"},
+		{"two valid emoji sequence with no space inbetween", ":sunglasses::sunglasses:"},
+		{"two valid emoji sequence with word inbetween", ":sunglasses: hello :sunglasses:"},
+		{"one mismatch", ":UPPER:"},
+		{"one match upper", ":CRY:"},
+		{"long with all kinds of cases", "I am :man_technologist: :extended_ascii_ý: :invalid_sequence: :umlautö: from :flag_for_turkey:. Tests are :thumbs_up:"},
+	}
+)
 
 var emojiCodeRegex = regexp.MustCompile("(?s):[a-zA-Z0-9_]+:")
 
@@ -87,6 +89,8 @@ func oldRegexReplace(input string) string {
 }
 
 func TestNewReplaceAndOldReplaceBehaveTheSame(t *testing.T) {
+	t.Parallel()
+
 	for _, test := range inputVariations {
 		a := oldRegexReplace(test[1])
 		b := Replace(test[1])
@@ -123,6 +127,8 @@ func BenchmarkReplace(b *testing.B) {
 }
 
 func Test_toLower(t *testing.T) {
+	t.Parallel()
+
 	inputs := [][2]string{
 		{"A", "a"},
 		{"a", ""},

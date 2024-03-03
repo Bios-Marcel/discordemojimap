@@ -10,6 +10,8 @@ import (
 )
 
 func TestContainsEmoji(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		emoji string
@@ -38,6 +40,8 @@ func TestContainsEmoji(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := ContainsEmoji(tt.emoji); got != tt.want {
 				t.Errorf("ContainsEmoji() = %v, want %v", got, tt.want)
 			}
@@ -51,6 +55,8 @@ func ExampleContainsEmoji() {
 }
 
 func TestContainsCode(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name      string
 		emojiCode string
@@ -89,6 +95,8 @@ func TestContainsCode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := ContainsCode(tt.emojiCode); got != tt.want {
 				t.Errorf("ContainsCode() = %v, want %v", got, tt.want)
 			}
@@ -102,6 +110,8 @@ func ExampleContainsCode() {
 }
 
 func TestGetEmojiCodes(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		emoji string
 		want  []string
@@ -134,6 +144,8 @@ func TestGetEmojiCodes(t *testing.T) {
 	}
 	for index, tt := range tests {
 		t.Run(fmt.Sprint(index), func(t *testing.T) {
+			t.Parallel()
+
 			if got := GetEmojiCodes(tt.emoji); !assert.ElementsMatch(t, got, tt.want) {
 				t.Errorf("GetEmojiCodes() = %v, want %v", got, tt.want)
 			}
@@ -149,6 +161,8 @@ func ExampleGetEmojiCodes() {
 }
 
 func TestGetEntriesWithPrefix(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		prefix []string
 		want   map[string]string
@@ -167,6 +181,8 @@ func TestGetEntriesWithPrefix(t *testing.T) {
 	}
 	for index, tt := range tests {
 		t.Run(fmt.Sprint(index), func(t *testing.T) {
+			t.Parallel()
+
 			for _, prefix := range tt.prefix {
 				if got := GetEntriesWithPrefix(prefix); !reflect.DeepEqual(got, tt.want) {
 					t.Errorf("GetEntriesWithPrefix() = %v, want %v", got, tt.want)
@@ -182,6 +198,8 @@ func ExampleGetEntriesWithPrefix() {
 }
 
 func TestGetEmoji(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		emojiCode string
 		want      string
@@ -225,6 +243,8 @@ func TestGetEmoji(t *testing.T) {
 	}
 	for index, tt := range tests {
 		t.Run(fmt.Sprint(index), func(t *testing.T) {
+			t.Parallel()
+
 			if got := GetEmoji(tt.emojiCode); got != tt.want {
 				t.Errorf("GetEmoji() = %v, want %v", got, tt.want)
 			}

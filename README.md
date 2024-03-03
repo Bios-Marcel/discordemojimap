@@ -7,6 +7,9 @@
 This library allows you to substitute Discord emoji codes with their respective
 emoji.
 
+Note that the tests require golang 1.22, due to the fact that they are
+parallelised, but don't shadow the loop variables.
+
 ## Example
 
 ```go
